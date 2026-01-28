@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const STATUS_LABELS = {
@@ -15,6 +16,13 @@ const STATUS_COLORS = {
 export default function TaskColumn({ status, tasks, onEdit, onDelete }) {
   const label = STATUS_LABELS[status] ?? status
   const color = STATUS_COLORS[status] ?? 'border-slate-300 bg-slate-50'
+  const [selectedImage, setSelectedImage] = useState(null)
+
+  function getImageUrl(imageUrl) {
+    return imageUrl?.startsWith('http')
+      ? imageUrl
+      : `http://127.0.0.1:8000${imageUrl}`
+  }
 
   return (
     <section className="flex-1 space-y-3">
@@ -34,15 +42,30 @@ export default function TaskColumn({ status, tasks, onEdit, onDelete }) {
             className={`rounded-lg border ${color} p-3 text-sm shadow-sm transition hover:-translate-y-0.5 hover:shadow-md`}
           >
             <header className="mb-1 flex items-start justify-between gap-2">
-              <h3 className="font-semibold text-slate-900">
-                <Link
-                  to={`/tasks/${task.id}`}
-                  className="hover:underline"
-                >
-                  {task.title}
-                </Link>
-              </h3>
+              <div className="flex-1">
+                <h3 className="font-semibold text-slate-900">
+                  <Link
+                    to={`/tasks/${task.id}`}
+                    className="hover:underline"
+                  >
+                    {task.title}
+                  </Link>
+                </h3>
+              </div>
             </header>
+
+            {/* Miniatura da imagem, se existir */}
+            {task.image_url && (
+              <div className="mb-2">
+                <img
+                  src={getImageUrl(task.image_url)}
+                  alt={`Miniatura de ${task.title}`}
+                  onClick={() => setSelectedImage(getImageUrl(task.image_url))}
+                  className="h-20 w-full cursor-pointer rounded border border-slate-200 bg-white object-contain transition hover:opacity-80"
+                  title="Clique para ver imagem completa"
+                />
+              </div>
+            )}
 
             {task.description && (
               <p className="mb-3 text-xs text-slate-700 line-clamp-3">
@@ -75,6 +98,42 @@ export default function TaskColumn({ status, tasks, onEdit, onDelete }) {
           </p>
         )}
       </div>
+
+      {/* Modal para visualizar imagem completa */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-h-full max-w-full">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute -right-2 -top-2 rounded-full bg-white p-2 text-slate-800 shadow-lg hover:bg-slate-100"
+              aria-label="Fechar"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <img
+              src={selectedImage}
+              alt="Imagem completa"
+              className="max-h-[90vh] max-w-full rounded-lg object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </section>
   )
 }

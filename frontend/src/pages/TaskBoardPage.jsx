@@ -4,6 +4,7 @@ import {
   deleteTask,
   fetchTasks,
   updateTask,
+  uploadTaskImage,
 } from '../api/tasks.js'
 import TaskForm from '../components/TaskForm.jsx'
 import TaskColumn from '../components/TaskColumn.jsx'
@@ -46,12 +47,20 @@ export default function TaskBoardPage() {
     return groups
   }, [tasks])
 
-  async function handleCreate(formData) {
+  async function handleCreate(formData, imageFile) {
     try {
       setSubmitting(true)
       setError('')
+      // cria tarefa primeiro
       const created = await createTask(formData)
-      setTasks((prev) => [...prev, created])
+
+      // se houver imagem, faz upload em seguida e usa a tarefa atualizada
+      let finalTask = created
+      if (imageFile) {
+        finalTask = await uploadTaskImage(created.id, imageFile)
+      }
+
+      setTasks((prev) => [...prev, finalTask])
       setEditingTask(null)
     } catch (err) {
       setError(err.message ?? 'Erro ao criar atividade')
@@ -60,12 +69,18 @@ export default function TaskBoardPage() {
     }
   }
 
-  async function handleUpdate(formData) {
+  async function handleUpdate(formData, imageFile) {
     try {
       if (!editingTask) return
       setSubmitting(true)
       setError('')
-      const updated = await updateTask(editingTask.id, formData)
+      // atualiza dados básicos
+      let updated = await updateTask(editingTask.id, formData)
+
+      // se uma nova imagem foi selecionada, envia e usa retorno
+      if (imageFile) {
+        updated = await uploadTaskImage(editingTask.id, imageFile)
+      }
       setTasks((prev) =>
         prev.map((t) => (t.id === editingTask.id ? updated : t)),
       )

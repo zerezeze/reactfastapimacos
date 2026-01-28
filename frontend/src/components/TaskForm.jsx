@@ -11,6 +11,7 @@ const EMPTY_FORM = {
  */
 export default function TaskForm({ initialTask, onSubmit, onCancel, submitting }) {
   const [form, setForm] = useState(EMPTY_FORM)
+  const [imageFile, setImageFile] = useState(null)
 
   useEffect(() => {
     if (initialTask) {
@@ -22,6 +23,8 @@ export default function TaskForm({ initialTask, onSubmit, onCancel, submitting }
     } else {
       setForm(EMPTY_FORM)
     }
+    // sempre resetar arquivo ao trocar de modo (nova/edição)
+    setImageFile(null)
   }, [initialTask])
 
   function handleChange(e) {
@@ -32,7 +35,14 @@ export default function TaskForm({ initialTask, onSubmit, onCancel, submitting }
   function handleSubmit(e) {
     e.preventDefault()
     if (!form.title.trim()) return
-    onSubmit(form)
+    onSubmit(form, imageFile)
+    // evita reutilizar o mesmo arquivo após o submit
+    setImageFile(null)
+  }
+
+  function handleImageChange(e) {
+    const file = e.target.files?.[0]
+    setImageFile(file ?? null)
   }
 
   return (
@@ -66,6 +76,23 @@ export default function TaskForm({ initialTask, onSubmit, onCancel, submitting }
           className="w-full resize-none rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
           placeholder="Detalhes da atividade"
         />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-slate-700">
+          Imagem (opcional)
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="block text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800"
+        />
+        {imageFile && (
+          <p className="mt-1 text-xs text-slate-600">
+            Arquivo selecionado: {imageFile.name}
+          </p>
+        )}
       </div>
 
       <div>

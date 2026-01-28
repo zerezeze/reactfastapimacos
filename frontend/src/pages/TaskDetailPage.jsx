@@ -18,7 +18,6 @@ export default function TaskDetailPage() {
   const [error, setError] = useState('')
   const [editing, setEditing] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -36,11 +35,18 @@ export default function TaskDetailPage() {
     load()
   }, [id])
 
-  async function handleUpdate(formData) {
+  async function handleUpdate(formData, imageFile) {
     try {
       setSubmitting(true)
       setError('')
-      const updated = await updateTask(id, formData)
+      // atualiza dados básicos
+      let updated = await updateTask(id, formData)
+
+      // se uma nova imagem foi selecionada, envia e usa retorno
+      if (imageFile) {
+        updated = await uploadTaskImage(id, imageFile)
+      }
+
       setTask(updated)
       setEditing(false)
     } catch (err) {
@@ -59,22 +65,6 @@ export default function TaskDetailPage() {
       navigate('/')
     } catch (err) {
       setError(err.message ?? 'Erro ao excluir atividade')
-    }
-  }
-
-  async function handleImageChange(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    try {
-      setUploading(true)
-      setError('')
-      const updated = await uploadTaskImage(id, file)
-      setTask(updated)
-    } catch (err) {
-      setError(err.message ?? 'Erro ao enviar imagem')
-    } finally {
-      setUploading(false)
-      e.target.value = ''
     }
   }
 
@@ -165,25 +155,6 @@ export default function TaskDetailPage() {
           />
         </div>
       )}
-
-      {/* Upload de nova imagem */}
-      <div>
-        <h3 className="mb-1 text-sm font-semibold text-slate-800">
-          Adicionar / trocar imagem
-        </h3>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          disabled={uploading}
-          className="block text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800"
-        />
-        {uploading && (
-          <p className="mt-1 text-xs text-slate-600">
-            Enviando imagem...
-          </p>
-        )}
-      </div>
 
       {task.description && (
         <p className="whitespace-pre-wrap rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800">
