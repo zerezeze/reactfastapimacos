@@ -54,7 +54,8 @@ class Database:
             id=new_id,
             title=task.title,
             description=task.description,
-            status=task.status
+            status=task.status,
+            image_url=task.image_url,
         )
         
         # Adiciona e salva
@@ -76,6 +77,9 @@ class Database:
                     task['description'] = task_update.description
                 if task_update.status is not None:
                     task['status'] = task_update.status
+                # Atualiza URL da imagem, se fornecida no update
+                if getattr(task_update, "image_url", None) is not None:
+                    task['image_url'] = task_update.image_url
                 
                 tasks_data[i] = task
                 self._write_tasks(tasks_data)

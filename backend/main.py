@@ -1,6 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from typing import List
+from pathlib import Path
 from models import Task, TaskCreate, TaskUpdate
 from database import db
 
@@ -10,6 +12,13 @@ app = FastAPI(
     description="API para gerenciamento de atividades",
     version="1.0.0"
 )
+
+# Diretório para upload de imagens
+UPLOAD_DIR = Path("uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+# Servir arquivos estáticos de upload
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 # Configurar CORS para permitir requisições do frontend
 app.add_middleware(
@@ -58,3 +67,32 @@ def delete_task(task_id: int):
     if not success:
         raise HTTPException(status_code=404, detail="Tarefa não encontrada")
     return None
+
+
+@app.post("/tasks/{task_id}/image", response_model=Task)
+async def upload_task_image(task_id: int, file: UploadFile = File(...)):
+    """
+    Faz upload de uma imagem e associa à tarefa informada.
+    A imagem fica disponível via /uploads/{nome_arquivo}.
+    """
+    # Verifica se a tarefa existe
+    task = db.get_task_by_id(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+
+    # Garante extensão básica
+    extension = Path(file.filename).suffix or ".png"
+    filename = f"task_{task_id}{extension}"
+    file_path = UPLOAD_DIR / filename
+
+    with file_path.open("wb") as f:
+        content = await file.read()
+        f.write(content)
+
+    image_url = f"/uploads/{filename}"
+
+    updated = db.update_task(task_id, TaskUpdate(image_url=image_url))
+    if not updated:
+        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+
+    return updated

@@ -13,6 +13,7 @@ class TaskBase(BaseModel):
     title: str
     description: str
     status: TaskStatus = TaskStatus.PENDENTE
+    image_url: Optional[str] = None
 
 class TaskCreate(TaskBase):
     """Schema para criar uma tarefa"""
@@ -23,6 +24,7 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[TaskStatus] = None
+    image_url: Optional[str] = None
 
 class Task(TaskBase):
     """Schema completo de uma tarefa com ID"""
