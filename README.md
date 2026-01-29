@@ -247,8 +247,8 @@ npm test
    - Backend:
      ```bash
      cd backend
-   source venv/bin/activate  # Windows: source venv/Scripts/activate
- python -m pytest
+     source venv/bin/activate  # Windows: source venv/Scripts/activate
+     python -m pytest
      ```
    - Frontend:
      ```bash
