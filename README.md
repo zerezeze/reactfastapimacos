@@ -97,7 +97,7 @@ Para executar:
 
 ```bash
 cd backend
-pytest
+venv/bin/python -m pytest
 ```
 
 O arquivo `backend/tests/test_tasks.py` cobre:

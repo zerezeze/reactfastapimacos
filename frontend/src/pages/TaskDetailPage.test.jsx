@@ -54,7 +54,7 @@ describe('TaskDetailPage', () => {
       name: /Anexo da atividade Detalhe tarefa/i,
     })
     expect(img).toBeInTheDocument()
-    expect(img).toHaveAttribute('src', '/uploads/task_1.png')
+    expect(img).toHaveAttribute('src', 'http://127.0.0.1:8000/uploads/task_1.png')
   })
 })
 
