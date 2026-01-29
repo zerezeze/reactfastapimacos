@@ -2,6 +2,15 @@
 
 Aplicação para gerenciamento de atividades, com backend em FastAPI (Python) e frontend em React + Vite + Tailwind. Permite criar, listar, editar, excluir e atualizar o status das atividades, além de anexar uma imagem opcional à atividade.
 
+## Requisitos do ambiente
+
+- Python 3.11 ou 3.12
+- Node.js 18+
+- npm ou yarn
+
+> Observação: o projeto não é compatível com Python 3.14 (preview) devido a dependências nativas do Pydantic/FastAPI.
+
+
 ### Funcionalidades
 
 - **Atividades**
