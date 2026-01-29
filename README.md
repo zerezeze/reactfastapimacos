@@ -71,9 +71,8 @@ No diretório raiz do projeto:
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: source venv\Scripts\activate
 pip install -r requirements.txt
-
 uvicorn main:app --reload
 ```
 
@@ -106,7 +105,8 @@ Para executar:
 
 ```bash
 cd backend
-venv/bin/python -m pytest
+source venv/bin/activate  # Windows: source venv/Scripts/activate
+python -m pytest
 ```
 
 O arquivo `backend/tests/test_tasks.py` cobre:
@@ -247,7 +247,8 @@ npm test
    - Backend:
      ```bash
      cd backend
-     venv/bin/python -m pytest
+   source venv/bin/activate  # Windows: source venv/Scripts/activate
+ python -m pytest
      ```
    - Frontend:
      ```bash
