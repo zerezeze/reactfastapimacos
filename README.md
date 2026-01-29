@@ -61,8 +61,8 @@ No diretório raiz do projeto:
 
 ```bash
 cd backend
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 uvicorn main:app --reload
@@ -217,8 +217,8 @@ npm test
    - Suba o servidor FastAPI:
      ```bash
      cd backend
-     python -m venv .venv
-     source .venv/bin/activate  # Windows: .venv\Scripts\activate
+     python -m venv venv
+     source venv/bin/activate  # Windows: venv\Scripts\activate
      pip install -r requirements.txt
      uvicorn main:app --reload
      ```
