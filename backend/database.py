@@ -12,9 +12,12 @@ class Database:
     
     def _initialize_file(self):
         """Inicializa o arquivo JSON se não existir"""
+        os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+
         if not os.path.exists(self.file_path):
-            with open(self.file_path, 'w') as f:
+            with open(self.file_path, "w", encoding="utf-8") as f:
                 json.dump([], f)
+
     
     def _read_tasks(self) -> List[dict]:
         """Lê todas as tarefas do arquivo"""
