@@ -238,7 +238,7 @@ npm test
    - Backend:
      ```bash
      cd backend
-     pytest
+     venv/bin/python -m pytest
      ```
    - Frontend:
      ```bash
